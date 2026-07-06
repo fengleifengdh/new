@@ -1,0 +1,150 @@
+{
+  "user": {
+    "name": "商务智眸",
+    "subtitle": "项目准入经营看板"
+  },
+  "period": "2026年6月",
+  "tabs": ["三期", "总体"],
+  "activeTab": "三期",
+  "summary": {
+    "admissionRate": 89.1,
+    "admissionRateDelta": 8.2,
+    "admissionCount": 1235,
+    "admissionCountDelta": 8.2,
+    "updateTime": "09:41"
+  },
+  "trend": {
+    "defaultMode": "cumulative",
+    "modes": [
+      {
+        "id": "monthly",
+        "label": "月度",
+        "months": ["一月", "二月", "三月", "四月", "五月", "六月"],
+        "rate": [63.5, 60.8, 72.2, 69.4, 86.8, 76.7],
+        "baseline": [58.4, 59.0, 60.5, 61.8, 64.7, 66.2],
+        "marker": {
+          "label": "2025.7",
+          "value": 76.7,
+          "change": -8.2,
+          "target": 85
+        }
+      },
+      {
+        "id": "cumulative",
+        "label": "累积",
+        "months": ["一月", "二月", "三月", "四月", "五月", "六月"],
+        "rate": [58.8, 63.6, 70.4, 74.8, 78.6, 89.1],
+        "baseline": [55.4, 59.2, 63.8, 68.5, 72.9, 76.4],
+        "marker": {
+          "label": "2025.2",
+          "value": 51.2,
+          "change": -18.2,
+          "target": 85
+        }
+      }
+    ]
+  },
+  "ranking": [
+    {
+      "id": "v-club",
+      "name": "铁V会",
+      "shortName": "铁V会",
+      "admissionRate": 89.1,
+      "admissionCount": 1235,
+      "trend": 8.2,
+      "tone": "rose"
+    },
+    {
+      "id": "ad",
+      "name": "1AD 项目",
+      "shortName": "1AD",
+      "admissionRate": 89.1,
+      "admissionCount": 1235,
+      "trend": 8.2,
+      "tone": "cyan"
+    },
+    {
+      "id": "deer",
+      "name": "灵鹿计划",
+      "shortName": "灵鹿",
+      "admissionRate": 89.1,
+      "admissionCount": 1235,
+      "trend": 8.2,
+      "tone": "amber"
+    }
+  ],
+  "details": {
+    "gauges": [
+      {
+        "title": "我的",
+        "totalRate": 87.1,
+        "formalRate": 79.2,
+        "tone": "green"
+      },
+      {
+        "title": "全国",
+        "totalRate": 81.2,
+        "formalRate": 75.1,
+        "tone": "blue"
+      }
+    ],
+    "bars": [
+      {
+        "label": "总准入家数",
+        "value": 1320,
+        "tone": "green"
+      },
+      {
+        "label": "正式准入家数",
+        "value": 893,
+        "tone": "green"
+      },
+      {
+        "label": "总准入家数",
+        "value": 1320,
+        "tone": "blue"
+      },
+      {
+        "label": "正式准入家数",
+        "value": 893,
+        "tone": "blue"
+      }
+    ],
+    "dealerRanking": [
+      {
+        "id": "dealer-1",
+        "name": "经销商1",
+        "value": 81
+      },
+      {
+        "id": "dealer-2",
+        "name": "经销商2",
+        "value": 71
+      },
+      {
+        "id": "dealer-3",
+        "name": "经销商3",
+        "value": 65.2
+      },
+      {
+        "id": "dealer-4",
+        "name": "经销商4",
+        "value": 50
+      },
+      {
+        "id": "dealer-5",
+        "name": "经销商5",
+        "value": 42
+      },
+      {
+        "id": "dealer-6",
+        "name": "经销商6",
+        "value": 35
+      }
+    ]
+  },
+  "alerts": {
+    "unread": 1,
+    "riskText": "1个项目低于月度目标"
+  }
+}

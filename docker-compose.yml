@@ -1,0 +1,10 @@
+services:
+  bayer-wecom-mobile:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bayer-wecom-mobile:latest
+    container_name: bayer-wecom-mobile
+    restart: unless-stopped
+    ports:
+      - "8080:80"

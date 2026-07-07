@@ -78,7 +78,7 @@ export interface RankingItem {
   tone: 'rose' | 'cyan' | 'amber' | 'green';
 }
 
-const DASHBOARD_ENDPOINT = '/api/dashboard.json';
+const DASHBOARD_ENDPOINT = `${import.meta.env.BASE_URL}api/dashboard.json`;
 
 export async function fetchDashboardData(signal?: AbortSignal): Promise<DashboardData> {
   const response = await fetch(DASHBOARD_ENDPOINT, {

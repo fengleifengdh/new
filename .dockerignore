@@ -3,6 +3,7 @@ dist
 !dist
 .git
 .uploads
+release
 .env
 .env.local
 vite-dev.log

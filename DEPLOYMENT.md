@@ -76,6 +76,37 @@ http://localhost:8080
 
 注意：`Dockerfile.static` 依赖本地已经生成的 `dist` 目录，适合本地验证；服务器正式部署优先使用默认的 `Dockerfile` 和 `docker-compose.yml`。
 
+## 打包成文件后上传服务器
+
+如果你不想在服务器上拉 GitHub 或重新构建镜像，可以在本地打包：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/package-docker.ps1
+```
+
+打包完成后会生成：
+
+```text
+release/
+  bayer-wecom-mobile-docker.tar
+  deploy-docker.sh
+  README.md
+```
+
+把整个 `release` 文件夹上传到服务器，然后在服务器执行：
+
+```bash
+cd release
+chmod +x deploy-docker.sh
+./deploy-docker.sh
+```
+
+默认访问端口是 `8080`。如果要改端口：
+
+```bash
+APP_PORT=8090 ./deploy-docker.sh
+```
+
 ## 常用命令
 
 查看容器：

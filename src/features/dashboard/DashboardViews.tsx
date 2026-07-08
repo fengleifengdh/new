@@ -644,12 +644,12 @@ function DetailMetricsPanel({ gauges, bars }: { gauges: DetailGauge[]; bars: Det
     <section className="glass-panel detail-card">
       <h2>准入详情</h2>
       <div className="detail-filters">
-        <button type="button">
+        <button type="button" className="filter-chip mine">
           我的
           <ChevronDown size={13} />
         </button>
         <span>对比</span>
-        <button type="button">
+        <button type="button" className="filter-chip nation">
           全国
           <ChevronDown size={13} />
         </button>
@@ -671,17 +671,17 @@ function DetailMetricsPanel({ gauges, bars }: { gauges: DetailGauge[]; bars: Det
 function GaugeCard({ gauge }: { gauge: DetailGauge }) {
   return (
     <article className="gauge-card">
-      <GaugeEChart gauge={gauge} />
+      <div className="gauge-echart">
+        <GaugeEChart gauge={gauge} />
+      </div>
       <div className="gauge-legend">
         <span>
           <i className="dot neutral" />
-          总准入率
-          <b>{gauge.totalRate.toFixed(1)}%</b>
+          总准入率 <em>{gauge.totalRate.toFixed(1)}%</em>
         </span>
         <span>
           <i className={`dot ${gauge.tone}`} />
-          正式准入率
-          <b>{gauge.formalRate.toFixed(1)}%</b>
+          正式准入率 <em>{gauge.formalRate.toFixed(1)}%</em>
         </span>
       </div>
     </article>
@@ -724,13 +724,9 @@ function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
           筛选
           <Filter size={13} />
         </button>
-        <button type="button" onClick={() => setTreeOpen(true)}>
-          按经销商排名
-          <ChevronDown size={13} />
-        </button>
       </div>
       <div className="dealer-list">
-        <DealerRankingEChart dealers={dealers} />
+        <DealerRankingEChart dealers={dealers} onSelectDealer={() => setTreeOpen(true)} />
       </div>
       <button className="load-all" type="button">
         <ChevronDown size={15} />

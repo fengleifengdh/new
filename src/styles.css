@@ -514,7 +514,76 @@ a:focus-visible {
 }
 
 .gauge-echart {
-  height: 76px;
+  height: 156px;
+}
+
+.gauge-svg {
+  display: block;
+  width: 100%;
+  height: 96px;
+  overflow: visible;
+}
+
+.gauge-outline,
+.gauge-rail,
+.gauge-progress,
+.gauge-white-arc {
+  fill: none;
+}
+
+.gauge-outline {
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.gauge-rail {
+  stroke: #2C3131;
+  stroke-width: 17;
+  stroke-linecap: butt;
+}
+
+.gauge-progress {
+  stroke-width: 17;
+  stroke-linecap: butt;
+  transition: d 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gauge-white-arc {
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.gauge-tick {
+  stroke: rgba(151, 155, 155, 0.55);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+.gauge-tick.major {
+  stroke: rgba(210, 218, 218, 0.78);
+  stroke-width: 1.6;
+}
+
+.gauge-number {
+  fill: rgba(151, 155, 155, 0.85);
+  font-size: 8px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.gauge-pointer {
+  stroke: #E8F8EF;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.gauge-anchor-ring {
+  fill: rgba(255, 255, 255, 0.82);
+}
+
+.gauge-anchor {
+  fill: #FFFFFF;
 }
 
 .detail-bars-echart {
@@ -898,7 +967,7 @@ a:focus-visible {
   border-radius: 8px;
   padding: 0 12px;
   color: rgba(220, 228, 228, 0.86);
-  background: rgba(255, 255, 255, 0.08);
+  background: #1C2323;
   font-size: 11px;
 }
 
@@ -910,6 +979,10 @@ a:focus-visible {
   color: var(--green);
 }
 
+.detail-filters button.filter-chip.nation {
+  color: var(--cyan);
+}
+
 .detail-filters span {
   color: var(--text);
   font-size: 12px;
@@ -919,84 +992,73 @@ a:focus-visible {
 .gauge-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
   margin-top: 12px;
 }
 
 .gauge-card {
-  min-width: 0;
-  border-radius: 12px;
-  padding: 8px;
-  background: #1C2323;
-}
-
-.gauge-face {
   position: relative;
-  height: 76px;
-  overflow: hidden;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
 }
 
-.gauge-arc {
+.gauge-echart {
+  position: relative;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-center-text {
   position: absolute;
-  inset: 4px 0 auto;
-  width: 116px;
-  height: 116px;
-  margin: 0 auto;
-  border: 13px solid #2C3131;
-  border-bottom-color: transparent;
-  border-left-color: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(8px);
+  text-align: center;
+  pointer-events: none;
 }
 
-.gauge-face.green .gauge-arc {
-  border-top-color: rgba(138, 211, 42, 0.88);
-  border-right-color: rgba(138, 211, 42, 0.6);
-}
-
-.gauge-face.blue .gauge-arc {
-  border-top-color: rgba(48, 132, 197, 0.9);
-  border-right-color: rgba(48, 132, 197, 0.58);
-}
-
-.gauge-needle {
-  position: absolute;
-  right: 50%;
-  bottom: 5px;
-  width: 48px;
-  height: 2px;
-  transform-origin: right center;
-  border-radius: 2px;
-  background: #DCE4E4;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+.gauge-center-text b {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .gauge-legend {
   display: grid;
-  gap: 5px;
-  margin-top: 1px;
+  gap: 6px;
+  margin-top: -2px;
+  padding: 0 2px;
 }
 
 .gauge-legend span {
   display: grid;
-  grid-template-columns: 10px 1fr auto;
+  grid-template-columns: 9px 1fr auto;
   align-items: center;
-  color: var(--text-soft);
+  color: #979797;
   font-size: 10px;
+  gap: 5px;
 }
 
-.gauge-legend b {
-  color: var(--text);
-  font-weight: 700;
+.gauge-legend em {
+  color: #ffffff;
+  font-style: normal;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
 }
 
 .dot.neutral {
-  background: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(180deg, #eef4f4 0%, #6d7674 100%);
 }
 
 .dot.green,
@@ -2426,6 +2488,62 @@ a:focus-visible {
 .ranking-expanded-panel .chart-card {
   margin-top: 10px;
   background: #1C2323;
+}
+
+.glass-panel,
+.detail-card,
+.report-section-card,
+.ranking-panel {
+  border: 1px solid rgba(77, 94, 89, 0.82);
+  background:
+    radial-gradient(circle at 22% 8%, rgba(138, 211, 42, 0.1), transparent 36%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.014) 48%, rgba(0, 0, 0, 0.1)),
+    rgba(21, 27, 27, 0.86);
+  box-shadow:
+    inset 0 8px 22.7px rgba(47, 81, 60, 0.16),
+    inset 8px 0 13.6px rgba(47, 81, 60, 0.16),
+    -4px -4px 13.2px rgba(86, 108, 100, 0.34),
+    0 22px 42px rgba(0, 0, 0, 0.3);
+}
+
+.ranking-panel {
+  border-radius: 22px;
+  padding: 12px;
+}
+
+.ranking-row {
+  border: 1px solid rgba(77, 94, 89, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.014)),
+    rgba(21, 27, 27, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -10px 26px rgba(4, 13, 13, 0.2);
+}
+
+.ranking-row.expanded {
+  border-color: rgba(138, 211, 42, 0.7);
+  background:
+    radial-gradient(circle at 16% 4%, rgba(138, 211, 42, 0.16), transparent 35%),
+    linear-gradient(180deg, rgba(138, 211, 42, 0.075), rgba(255, 255, 255, 0.014)),
+    rgba(21, 27, 27, 0.78);
+  box-shadow:
+    inset 0 8px 22.7px rgba(47, 81, 60, 0.16),
+    inset 8px 0 13.6px rgba(47, 81, 60, 0.14),
+    0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
+.ranking-expanded-panel .kpi-card,
+.ranking-expanded-panel .chart-card,
+.bar-chart {
+  border: 1px solid rgba(77, 94, 89, 0.62);
+  background:
+    radial-gradient(circle at 72% 18%, rgba(48, 132, 197, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    #1C2323;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 14px 24px rgba(0, 0, 0, 0.18);
 }
 
 .bottom-nav {

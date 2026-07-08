@@ -108,40 +108,93 @@ function isSeriesPointClick(value: unknown): value is { componentType: string; d
 
 export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
   const color = gauge.tone === 'blue' ? '#3084C5' : '#8AD32A';
+  const shadowColor = gauge.tone === 'blue' ? '#2E82C2' : '#89D22A';
   const animated = useEntranceAnimation(`${gauge.title}-${gauge.totalRate}`);
+  const progress = animated ? Math.min(Math.max(gauge.formalRate * 0.46, 0), 40) : 0;
+  const cx = 76;
+  const cy = 77;
+  const outerArc = describeSemiArc(cx, cy, 69, 180, 0);
+  const whiteArc = describeSemiArc(cx, cy, 58, 105, 75);
+  const railArc = describeSemiArc(cx, cy, 44, 180, 0);
+  const progressArc = describeSemiArc(cx, cy, 44, 180, 180 - progress * 1.8);
+  const pointerEnd = polarToCartesian(cx, cy, 48, 93);
+  const majorTicks = Array.from({ length: 11 }, (_, index) => index * 10);
+  const minorTicks = Array.from({ length: 61 }, (_, index) => index * (100 / 60));
 
   return (
-    <EChart
-      className="echart gauge-echart"
-      option={{
-        animationDuration: 900,
-        animationDurationUpdate: 900,
-        animationEasing: 'cubicOut',
-        animationEasingUpdate: 'cubicOut',
-        series: [
-          {
-            type: 'gauge',
-            startAngle: 180,
-            endAngle: 0,
-            min: 0,
-            max: 100,
-            radius: '100%',
-            center: ['50%', '78%'],
-            splitNumber: 5,
-            progress: { show: true, width: 10, itemStyle: { color } },
-            axisLine: { lineStyle: { width: 10, color: [[1, '#2C3131']] } },
-            axisTick: { distance: -15, length: 4, lineStyle: { color: 'rgba(180,180,180,0.4)', width: 1 } },
-            splitLine: { distance: -18, length: 8, lineStyle: { color: 'rgba(180,180,180,0.45)', width: 1 } },
-            axisLabel: { distance: -10, color: '#979797', fontSize: 7 },
-            pointer: { length: '58%', width: 3, itemStyle: { color: '#DCE4E4' } },
-            anchor: { show: true, size: 6, itemStyle: { color: '#DCE4E4' } },
-            detail: { show: false },
-            data: [{ value: animated ? gauge.totalRate : 0 }],
-          },
-        ],
-      }}
-    />
+    <svg className="gauge-svg" viewBox="0 0 152 96" role="img" aria-label={`${gauge.title} ${gauge.totalRate.toFixed(1)}%`}>
+      <defs>
+        <linearGradient id={`gaugeProgress-${gauge.tone}`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={color} stopOpacity="1" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.62" />
+        </linearGradient>
+        <linearGradient id={`gaugeWhite-${gauge.tone}`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#F8FBFB" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="#DDE5E5" stopOpacity="1" />
+        </linearGradient>
+        <filter id={`gaugeGlow-${gauge.tone}`} x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="2.2" floodColor={shadowColor} floodOpacity="0.68" />
+        </filter>
+      </defs>
+
+      <path className="gauge-outline" d={outerArc} stroke={color} />
+      <path className="gauge-rail" d={railArc} />
+      <path className="gauge-progress" d={progressArc} stroke={`url(#gaugeProgress-${gauge.tone})`} />
+      <path className="gauge-white-arc" d={whiteArc} stroke={`url(#gaugeWhite-${gauge.tone})`} />
+
+      {minorTicks.map((tick) => {
+        const angle = valueToGaugeAngle(tick);
+        const isMajor = Math.round(tick) % 10 === 0;
+        const inner = polarToCartesian(cx, cy, isMajor ? 45 : 48, angle);
+        const outer = polarToCartesian(cx, cy, 56, angle);
+        return (
+          <line
+            key={`tick-${tick}`}
+            className={isMajor ? 'gauge-tick major' : 'gauge-tick'}
+            x1={inner.x}
+            y1={inner.y}
+            x2={outer.x}
+            y2={outer.y}
+          />
+        );
+      })}
+
+      {majorTicks.map((tick) => {
+        const angle = valueToGaugeAngle(tick);
+        const textPoint = polarToCartesian(cx, cy, 73, angle);
+        return (
+          <text key={`label-${tick}`} className="gauge-number" x={textPoint.x} y={textPoint.y + 3} textAnchor="middle">
+            {tick}
+          </text>
+        );
+      })}
+
+      <line className="gauge-pointer" x1={cx} y1={cy} x2={pointerEnd.x} y2={pointerEnd.y} filter={`url(#gaugeGlow-${gauge.tone})`} />
+      <circle className="gauge-anchor-ring" cx={cx} cy={cy} r="4.3" filter={`url(#gaugeGlow-${gauge.tone})`} />
+      <circle className="gauge-anchor" cx={cx} cy={cy} r="2.3" />
+    </svg>
   );
+}
+
+function valueToGaugeAngle(value: number) {
+  return 180 - (value / 100) * 180;
+}
+
+function describeSemiArc(centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) {
+  const start = polarToCartesian(centerX, centerY, radius, startAngle);
+  const end = polarToCartesian(centerX, centerY, radius, endAngle);
+  const largeArcFlag = Math.abs(endAngle - startAngle) <= 180 ? 0 : 1;
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+}
+
+function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
+  const angleInRadians = (angleInDegrees * Math.PI) / 180;
+
+  return {
+    x: centerX + radius * Math.cos(angleInRadians),
+    y: centerY - radius * Math.sin(angleInRadians),
+  };
 }
 
 export function DetailBarsEChart({ bars }: { bars: DetailBar[] }) {
@@ -190,13 +243,30 @@ export function DetailBarsEChart({ bars }: { bars: DetailBar[] }) {
   );
 }
 
-export function DealerRankingEChart({ dealers }: { dealers: DealerRank[] }) {
+export function DealerRankingEChart({
+  dealers,
+  onSelectDealer,
+}: {
+  dealers: DealerRank[];
+  onSelectDealer?: (dealer: DealerRank) => void;
+}) {
   const dataKey = dealers.map((dealer) => `${dealer.id}:${dealer.value}`).join('|');
   const animated = useEntranceAnimation(dataKey);
 
   return (
     <EChart
       className="echart dealer-ranking-echart"
+      onChartClick={(params: unknown) => {
+        if (!onSelectDealer) {
+          return;
+        }
+        const candidate = params as { dataIndex?: unknown };
+        const index = typeof candidate.dataIndex === 'number' ? candidate.dataIndex : -1;
+        const dealer = dealers[index];
+        if (dealer) {
+          onSelectDealer(dealer);
+        }
+      }}
       option={{
         animationDuration: 850,
         animationDurationUpdate: 850,
@@ -224,6 +294,7 @@ export function DealerRankingEChart({ dealers }: { dealers: DealerRank[] }) {
             showBackground: true,
             backgroundStyle: { color: 'rgba(255,255,255,0.08)', borderRadius: 99 },
             label: { show: true, position: 'right', formatter: '{c}%', color: '#DCE4E4', fontSize: 9 },
+            cursor: 'pointer',
           },
         ],
       }}

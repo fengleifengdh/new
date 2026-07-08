@@ -110,19 +110,35 @@ export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
   const color = gauge.tone === 'blue' ? '#3084C5' : '#8AD32A';
   const shadowColor = gauge.tone === 'blue' ? '#2E82C2' : '#89D22A';
   const animated = useEntranceAnimation(`${gauge.title}-${gauge.totalRate}`);
+
+  // 进度值：将 formalRate（0~100）缩放到 0~40 区间，用于驱动进度弧的角度
   const progress = animated ? Math.min(Math.max(gauge.formalRate * 0.46, 0), 40) : 0;
+
+  // —— 仪表盘几何参数 ——
+  // 圆心坐标（SVG 坐标系，原点左上，y 向下）
   const cx = 76;
-  const cy = 77;
-  const outerArc = describeSemiArc(cx, cy, 69, 180, 0);
-  const whiteArc = describeSemiArc(cx, cy, 58, 105, 75);
-  const railArc = describeSemiArc(cx, cy, 44, 180, 0);
-  const progressArc = describeSemiArc(cx, cy, 44, 180, 180 - progress * 1.8);
-  const pointerEnd = polarToCartesian(cx, cy, 48, 93);
+  const cy = 80;
+
+  // 层次（从外到内）：外圈 → 白色弧 → 刻度 → 进度环 → 指针
+  // 外圈细线弧：半径 68，半圆 180°→0°（最外侧的细描边轮廓）
+  const outerArc = describeSemiArc(cx, cy, 68, 180, 0);
+  // 白色高亮弧：半径 62，角度 108°→72°（刻度外侧/上层，对应刻度 40→60，位于半圆顶部正中）
+  const whiteArc = describeSemiArc(cx, cy, 62, 108, 72);
+  // 轨道弧：半径 38，半圆 180°→0°（深灰色底色弧，在刻度内侧/下层，作为进度弧的背景轨道）
+  const railArc = describeSemiArc(cx, cy, 38, 180, 0);
+  // 进度弧：半径 38，从 180° 起向右收拢至 (180 - progress*1.8)°
+  //   progress=0 → 结束角 180°（空弧）；progress=40 → 结束角 108°（约覆盖 40% 半圆）
+  const progressArc = describeSemiArc(cx, cy, 38, 180, 180 - progress * 1.8);
+
+  // 指针终点：半径 50，固定指向 90°（正上方），对应刻度 50
+  const pointerEnd = polarToCartesian(cx, cy, 50, 90);
+
+  // 刻度：11 个主刻度（0,10,20…100），61 个次刻度（每 100/60≈1.67 一格）
   const majorTicks = Array.from({ length: 11 }, (_, index) => index * 10);
   const minorTicks = Array.from({ length: 61 }, (_, index) => index * (100 / 60));
 
   return (
-    <svg className="gauge-svg" viewBox="0 0 152 96" role="img" aria-label={`${gauge.title} ${gauge.totalRate.toFixed(1)}%`}>
+    <svg className="gauge-svg" viewBox="-4 -10 160 104" role="img" aria-label={`${gauge.title} ${gauge.totalRate.toFixed(1)}%`}>
       <defs>
         <linearGradient id={`gaugeProgress-${gauge.tone}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={color} stopOpacity="1" />
@@ -137,16 +153,18 @@ export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
         </filter>
       </defs>
 
+      {/* 渲染顺序（从下到上）：外圈 → 进度环（刻度下层）→ 刻度短线 → 数字 → 白色弧（刻度上层）→ 指针 */}
       <path className="gauge-outline" d={outerArc} stroke={color} />
       <path className="gauge-rail" d={railArc} />
       <path className="gauge-progress" d={progressArc} stroke={`url(#gaugeProgress-${gauge.tone})`} />
-      <path className="gauge-white-arc" d={whiteArc} stroke={`url(#gaugeWhite-${gauge.tone})`} />
 
       {minorTicks.map((tick) => {
         const angle = valueToGaugeAngle(tick);
         const isMajor = Math.round(tick) % 10 === 0;
-        const inner = polarToCartesian(cx, cy, isMajor ? 45 : 48, angle);
-        const outer = polarToCartesian(cx, cy, 56, angle);
+        // 刻度短线：主刻度内端半径 44、次刻度内端半径 48；外端统一半径 54
+        //   即主刻度线长 10、次刻度线长 6（位于进度环 r=38 外侧、白色弧 r=62 内侧的中间层）
+        const inner = polarToCartesian(cx, cy, isMajor ? 44 : 48, angle);
+        const outer = polarToCartesian(cx, cy, 54, angle);
         return (
           <line
             key={`tick-${tick}`}
@@ -161,7 +179,8 @@ export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
 
       {majorTicks.map((tick) => {
         const angle = valueToGaugeAngle(tick);
-        const textPoint = polarToCartesian(cx, cy, 73, angle);
+        // 刻度数字：半径 74（位于外圈 r=68 外侧）
+        const textPoint = polarToCartesian(cx, cy, 74, angle);
         return (
           <text key={`label-${tick}`} className="gauge-number" x={textPoint.x} y={textPoint.y + 3} textAnchor="middle">
             {tick}
@@ -169,17 +188,25 @@ export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
         );
       })}
 
-      <line className="gauge-pointer" x1={cx} y1={cy} x2={pointerEnd.x} y2={pointerEnd.y} filter={`url(#gaugeGlow-${gauge.tone})`} />
+      {/* 白色高亮弧：在刻度上面渲染（覆盖刻度 40→60 的顶部区域） */}
+      <path className="gauge-white-arc" d={whiteArc} stroke={`url(#gaugeWhite-${gauge.tone})`} />
+
+      {/* 指针轴心：外环 r=4.3 带辉光，内点 r=2.3（先渲染，作为指针根部底座） */}
       <circle className="gauge-anchor-ring" cx={cx} cy={cy} r="4.3" filter={`url(#gaugeGlow-${gauge.tone})`} />
+      {/* 指针：从圆心 (cx,cy) 指向 pointerEnd，长度 = 指针半径 50（最后渲染，确保覆盖 anchor） */}
+      <line className="gauge-pointer" x1={cx} y1={cy} x2={pointerEnd.x} y2={pointerEnd.y} filter={`url(#gaugeGlow-${gauge.tone})`} />
       <circle className="gauge-anchor" cx={cx} cy={cy} r="2.3" />
     </svg>
   );
 }
 
+// 将 0~100 的刻度值映射为半圆角度：100→0°（右端），0→180°（左端）
 function valueToGaugeAngle(value: number) {
   return 180 - (value / 100) * 180;
 }
 
+// 生成一段半圆弧的 SVG path（M 起点移动 + A 圆弧绘制）
+//   startAngle→endAngle 为角度（度），0° 指向正东，逆时针递增
 function describeSemiArc(centerX: number, centerY: number, radius: number, startAngle: number, endAngle: number) {
   const start = polarToCartesian(centerX, centerY, radius, startAngle);
   const end = polarToCartesian(centerX, centerY, radius, endAngle);
@@ -188,6 +215,8 @@ function describeSemiArc(centerX: number, centerY: number, radius: number, start
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
 }
 
+// 极坐标 → 笛卡尔坐标转换（SVG 坐标系，y 向下）
+//   angle 0° = 正东（右），90° = 正北（上），180° = 正西（左）
 function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
   const angleInRadians = (angleInDegrees * Math.PI) / 180;
 

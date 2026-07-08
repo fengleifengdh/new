@@ -89,40 +89,36 @@ export function ReportDetailView({ mode, onBack, onEdit }: { mode: 'readonly' | 
         </button>
       )}
 
-      <section className="report-section-card">
-        <div className="report-section-title">
-          <h2>基础信息</h2>
-          <button type="button">折叠</button>
-        </div>
+      <CollapsibleSection title="基础信息">
         <InfoGrid />
-      </section>
+      </CollapsibleSection>
 
-      <section className="report-section-card">
-        <div className="report-section-title">
-          <h2>准入结果</h2>
-          <button type="button">折叠</button>
-        </div>
+      <CollapsibleSection title="准入结果">
         {editing ? <EditForm onDate={() => setDateOpen(true)} onDealer={() => setDealerOpen(true)} /> : <ReadonlyResult />}
-      </section>
+      </CollapsibleSection>
 
       {editing && (
         <>
-          <section className="report-section-card compact-form-card">
-            <div className="report-section-title">
-              <h2>过程信息</h2>
-              <button type="button">折叠</button>
-            </div>
+          <CollapsibleSection title="过程信息" className="compact-form-card">
             <FormRow label="销售最新提单状态" value="请选择" />
             <FormRow label="销售最新提单类型" value="请选择" />
-          </section>
-          <section className="report-section-card compact-form-card">
-            <div className="report-section-title">
-              <h2>经销商及人员信息</h2>
-              <button type="button">折叠</button>
-            </div>
-            <FormRow label="XXXXXXX" value="请选择" />
-            <FormRow label="XXXXXXX" value="请选择" />
-          </section>
+            <FormRow label="销售已提单/计划提单时间（年/月）" value="请选择" />
+            <FormRow label="商务确认提单有效性" value="请选择" />
+            <FormRow label="预估药事会时间" value="请选择" />
+            <FormRow label="预估准入形式" value="请选择" />
+            <FormRow label="预估准入时间（年/月）" value="请选择" />
+            <FormRow label="倒车填报原因" value="请选择" />
+          </CollapsibleSection>
+          <CollapsibleSection title="经销商及人员信息" className="compact-form-card">
+            <FormRow label="项目支持经销商" value="上药控股安徽有限公司" onClick={() => setDealerOpen(true)} />
+            <FormRow label="项目支持经销商所属集团" value="上药集团" />
+            <FormRow label="商务区域" value="东二区" />
+            <FormRow label="商务一线" value="安静" />
+            <FormRow label="销售区域对接人" value="苏贵霞" />
+            <FormRow label="销售 Cluster" value="OPH" />
+            <FormRow label="销售大区" value="OPH-沪皖大区" />
+            <FormRow label="销售 RM Name" value="方珠" />
+          </CollapsibleSection>
           <div className="report-submit-bar">
             <button className="cancel" onClick={onBack} type="button">取消</button>
             <button className="submit" type="button">提交</button>
@@ -139,7 +135,40 @@ export function ReportDetailView({ mode, onBack, onEdit }: { mode: 'readonly' | 
       {dateOpen && <DatePickerSheet onClose={() => setDateOpen(false)} />}
       {dealerOpen && <DealerPickerSheet onClose={() => setDealerOpen(false)} />}
       {concernOpen && <ConcernSheet onClose={() => setConcernOpen(false)} />}
-      {infoOpen && <InfoDialog onClose={() => setInfoOpen(false)} tab={editing ? 'result' : 'base'} />}
+      {infoOpen && <InfoDialog onClose={() => setInfoOpen(false)} tab={editing ? 'result' : 'result'} />}
+    </section>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = true,
+  className,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const classes = ['report-section-card'];
+  if (className) classes.push(className);
+  if (!open) classes.push('collapsed');
+  return (
+    <section className={classes.join(' ')}>
+      <div className="report-section-title">
+        <h2>{title}</h2>
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-label={open ? `折叠${title}` : `展开${title}`}
+        >
+          {open ? '折叠' : '展开'}
+        </button>
+      </div>
+      {open && children}
     </section>
   );
 }
@@ -183,12 +212,18 @@ function HospitalSummary({ onInfo }: { onInfo: () => void }) {
 function InfoGrid() {
   return (
     <div className="info-grid">
-      <label>医院编码 SE Code</label>
-      <strong>1870</strong>
-      <label>省份</label>
-      <strong>安徽省</strong>
-      <label>医院级别</label>
-      <strong>三级</strong>
+      <div className="info-cell">
+        <label>医院编码 SE Code</label>
+        <strong>1870</strong>
+      </div>
+      <div className="info-cell">
+        <label>省份</label>
+        <strong>安徽省</strong>
+      </div>
+      <div className="info-cell">
+        <label>医院级别</label>
+        <strong>三级</strong>
+      </div>
     </div>
   );
 }
@@ -196,16 +231,30 @@ function InfoGrid() {
 function ReadonlyResult() {
   return (
     <div className="readonly-result">
-      <label>实际准入形式</label>
-      <strong>批量临采</strong>
-      <label>实际准入时间（年/月/日）</label>
-      <strong><CalendarDays size={14} /> 2025/09/12</strong>
-      <label>实际准入经销商（一级商）</label>
-      <strong>安徽省广济大药房连锁有限公司</strong>
-      <label>配送经销商（一级商分子公司）</label>
-      <strong>滁州华巨百姓缘大药房连锁股份有限公司</strong>
-      <label>实际准入商务一线</label>
-      <strong><span className="person-dot">费</span> 费敏</strong>
+      <div className="info-cell">
+        <label>实际准入形式</label>
+        <strong>批量临采</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入时间（年/月/日）</label>
+        <strong><CalendarDays size={14} /> 2025/09/12</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入经销商（一级商）</label>
+        <strong>安徽省广济大药房连锁有限公司</strong>
+      </div>
+      <div className="info-cell">
+        <label>配送经销商（一级商分子公司）</label>
+        <strong>滁州华巨百姓缘大药房连锁股份有限公司</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入商务一线</label>
+        <strong><span className="person-dot">费</span> 费敏</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入月份</label>
+        <strong>2025/09</strong>
+      </div>
     </div>
   );
 }
@@ -283,7 +332,8 @@ function ConcernSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-function InfoDialog({ onClose, tab }: { onClose: () => void; tab: 'base' | 'result' }) {
+function InfoDialog({ onClose, tab: initialTab }: { onClose: () => void; tab: 'base' | 'result' | 'history' }) {
+  const [tab, setTab] = useState(initialTab);
   return (
     <div className="dialog-overlay">
       <button className="dialog-scrim" onClick={onClose} type="button" aria-label="关闭查看信息" />
@@ -291,12 +341,66 @@ function InfoDialog({ onClose, tab }: { onClose: () => void; tab: 'base' | 'resu
         <button className="dialog-close" onClick={onClose} type="button"><X size={18} /></button>
         <h2>准入详情</h2>
         <div className="info-dialog-tabs">
-          <button className={tab === 'base' ? 'active' : ''} type="button">基础信息</button>
-          <button className={tab === 'result' ? 'active' : ''} type="button">认定准入结果</button>
-          <button type="button">历史准入结果</button>
+          <button
+            className={tab === 'base' ? 'active' : ''}
+            onClick={() => setTab('base')}
+            type="button"
+            aria-pressed={tab === 'base'}
+          >
+            基础信息
+          </button>
+          <button
+            className={tab === 'result' ? 'active' : ''}
+            onClick={() => setTab('result')}
+            type="button"
+            aria-pressed={tab === 'result'}
+          >
+            认定准入结果
+          </button>
+          <button
+            className={tab === 'history' ? 'active' : ''}
+            onClick={() => setTab('history')}
+            type="button"
+            aria-pressed={tab === 'history'}
+          >
+            历史准入结果
+          </button>
         </div>
-        {tab === 'base' ? <InfoGrid /> : <ReadonlyResult />}
+        {tab === 'base' && <InfoGrid />}
+        {tab === 'result' && <ReadonlyResult />}
+        {tab === 'history' && <HistoryResult />}
       </section>
+    </div>
+  );
+}
+
+function HistoryResult() {
+  return (
+    <div className="readonly-result">
+      <div className="info-cell">
+        <label>实际准入形式</label>
+        <strong>单品准入</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入时间（年/月/日）</label>
+        <strong><CalendarDays size={14} /> 2024/03/18</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入经销商（一级商）</label>
+        <strong>安徽省医药工业有限公司</strong>
+      </div>
+      <div className="info-cell">
+        <label>配送经销商（一级商分子公司）</label>
+        <strong>合肥泰康医药连锁股份有限公司</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入商务一线</label>
+        <strong><span className="person-dot">张</span> 张磊</strong>
+      </div>
+      <div className="info-cell">
+        <label>实际准入月份</label>
+        <strong>2024/03</strong>
+      </div>
     </div>
   );
 }
@@ -315,31 +419,69 @@ function ModalSheet({ title, children, onClose, bottom }: { title: string; child
 }
 
 function ReportFilterPanel({ onClose }: { onClose: () => void }) {
-  const groups = [
-    ['A-Z', 'Z-A'],
-    ['更新时间', '关注等级', '准入状态'],
-    ['重点关注', '需要关注', '无需关注'],
-    ['出类拔萃', '嫚尚V家', '请选择项目', '非凡项目二期', '非凡项目一期', '优量绽放-优思悦', '优量绽放-曼月乐'],
-    ['CVRM', 'EP', 'GM', 'OHC', 'OPH', 'SM', 'WHC'],
-    ['未锁定', '已锁定未认定', '未锁定已认定', '已锁定已认定'],
+  const groups: { title: string; options: string[]; multiple: boolean; defaultSelected?: string[] }[] = [
+    { title: '经销省份排序', options: ['A-Z', 'Z-A'], multiple: false, defaultSelected: ['Z-A'] },
+    { title: '准入排序', options: ['更新时间', '关注等级', '准入状态'], multiple: false, defaultSelected: ['关注等级'] },
+    { title: '关注等级', options: ['重点关注', '需要关注', '无需关注'], multiple: true, defaultSelected: ['需要关注'] },
+    { title: '项目名称', options: ['出类拔萃', '嫚尚V家', '请选择项目', '非凡项目二期', '非凡项目一期', '优量绽放-优思悦', '优量绽放-曼月乐'], multiple: true, defaultSelected: ['嫚尚V家', '请选择项目'] },
+    { title: 'BU', options: ['CVRM', 'EP', 'GM', 'OHC', 'OPH', 'SM', 'WHC'], multiple: true, defaultSelected: ['EP'] },
+    { title: '锁定与认定', options: ['未锁定', '已锁定未认定', '未锁定已认定', '已锁定已认定'], multiple: true, defaultSelected: ['已锁定未认定'] },
   ];
-  const titles = ['经销省份排序', '准入排序', '关注等级', '项目名称', 'BU', '锁定与认定'];
+  const [selected, setSelected] = useState<Record<string, string[]>>(
+    () => Object.fromEntries(groups.map((g) => [g.title, g.defaultSelected ?? []])),
+  );
+  const [showCrossProvince, setShowCrossProvince] = useState(true);
+
+  const toggle = (title: string, option: string, multiple: boolean) => {
+    setSelected((prev) => {
+      const current = prev[title] ?? [];
+      let next: string[];
+      if (multiple) {
+        next = current.includes(option) ? current.filter((item) => item !== option) : [...current, option];
+      } else {
+        next = current[0] === option ? [] : [option];
+      }
+      return { ...prev, [title]: next };
+    });
+  };
+
+  const handleReset = () => {
+    setSelected(Object.fromEntries(groups.map((g) => [g.title, []])));
+    setShowCrossProvince(false);
+  };
+
   return (
     <div className="report-filter-panel">
       <button className="filter-scrim" onClick={onClose} type="button" aria-label="关闭筛选" />
       <aside className="report-filter-drawer">
         <h2>筛选与排序</h2>
-        {groups.map((group, groupIndex) => (
-          <section key={titles[groupIndex]}>
-            <h3>{titles[groupIndex]}</h3>
+        {groups.map((group) => (
+          <section key={group.title}>
+            <h3>{group.title}</h3>
             <div>
-              {group.map((item, index) => <button className={index === 1 || item === '请选择项目' ? 'active' : ''} key={item} type="button">{item}</button>)}
+              {group.options.map((option) => {
+                const active = (selected[group.title] ?? []).includes(option);
+                return (
+                  <button
+                    className={active ? 'active' : ''}
+                    key={option}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => toggle(group.title, option, group.multiple)}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
             </div>
           </section>
         ))}
-        <label className="switch-row">显示跨省条目 <input defaultChecked type="checkbox" /></label>
+        <label className="switch-row">
+          显示跨省条目
+          <input type="checkbox" checked={showCrossProvince} onChange={(event) => setShowCrossProvince(event.target.checked)} />
+        </label>
         <div className="filter-actions report-actions">
-          <button className="reset" type="button">重置</button>
+          <button className="reset" onClick={handleReset} type="button">重置</button>
           <button className="confirm" onClick={onClose} type="button">确认</button>
         </div>
       </aside>

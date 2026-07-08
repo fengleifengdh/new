@@ -691,6 +691,7 @@ function GaugeCard({ gauge }: { gauge: DetailGauge }) {
 function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [treeOpen, setTreeOpen] = useState(false);
+  const [rankMode, setRankMode] = useState<'total' | 'dealer'>('total');
   const [activeFilter, setActiveFilter] = useState({
     area: '华北区',
     province: '河北省',
@@ -723,6 +724,14 @@ function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
         <button type="button" onClick={() => setFilterOpen(true)}>
           筛选
           <Filter size={13} />
+        </button>
+        <button
+          type="button"
+          className={rankMode === 'dealer' ? 'selected' : ''}
+          onClick={() => setRankMode((m) => (m === 'total' ? 'dealer' : 'total'))}
+        >
+          按经销商排名
+          <ChevronDown size={13} />
         </button>
       </div>
       <div className="dealer-list">

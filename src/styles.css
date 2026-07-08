@@ -1,19 +1,19 @@
 :root {
   --bg-page: #f3f5f8;
-  --bg-app: #06100f;
-  --surface: rgba(24, 36, 34, 0.94);
-  --surface-strong: rgba(31, 43, 41, 0.98);
+  --bg-app: #0D1515;
+  --surface: #151B1B;
+  --surface-strong: #1C2323;
   --surface-soft: rgba(255, 255, 255, 0.055);
-  --border: rgba(177, 211, 198, 0.2);
-  --border-strong: rgba(150, 255, 191, 0.34);
-  --text: #f3fff8;
-  --text-soft: rgba(231, 249, 240, 0.7);
-  --text-muted: rgba(231, 249, 240, 0.48);
-  --green: #87dc22;
-  --green-strong: #44f06e;
-  --cyan: #8ee7ff;
-  --danger: #ff4b5f;
-  --amber: #ffb453;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --text: #DCE4E4;
+  --text-soft: #B4B4B4;
+  --text-muted: #979797;
+  --green: #8AD32A;
+  --green-strong: #8AD32A;
+  --cyan: #3084C5;
+  --danger: #FF3162;
+  --amber: #FFD333;
   font-family:
     Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -70,14 +70,11 @@ a:focus-visible {
 
 .device {
   position: relative;
-  width: 340px;
-  min-height: 733px;
+  width: 375px;
+  min-height: 812px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  background:
-    radial-gradient(circle at 24% 6%, rgba(53, 246, 116, 0.16), transparent 22%),
-    radial-gradient(circle at 86% 28%, rgba(50, 209, 255, 0.11), transparent 25%),
-    linear-gradient(180deg, #071111 0%, #081817 48%, #050b0b 100%);
+  background: #0D1515;
   box-shadow: 0 24px 70px rgba(20, 36, 48, 0.18);
 }
 
@@ -240,11 +237,9 @@ a:focus-visible {
 .glass-panel {
   border: 1px solid var(--border);
   border-radius: 14px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012)),
-    var(--surface);
+  background: #151B1B;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
     0 18px 34px rgba(0, 0, 0, 0.22);
 }
 
@@ -291,7 +286,7 @@ a:focus-visible {
   font-size: 17px;
   font-weight: 900;
   letter-spacing: -0.7px;
-  text-shadow: 0 0 14px rgba(68, 240, 110, 0.5);
+  text-shadow: 0 0 14px rgba(138, 211, 42, 0.5);
 }
 
 .bayer-mark::before,
@@ -327,9 +322,9 @@ a:focus-visible {
 }
 
 .segments button.selected {
-  color: #f8fff9;
-  background: rgba(117, 255, 65, 0.14);
-  box-shadow: inset 0 -2px 0 rgba(139, 255, 61, 0.8);
+  color: #FFFFFF;
+  background: rgba(138, 211, 42, 0.14);
+  box-shadow: inset 0 -2px 0 rgba(138, 211, 42, 0.8);
 }
 
 .section-toolbar {
@@ -377,15 +372,13 @@ a:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.055);
   border-radius: 12px;
   padding: 11px 12px;
-  background:
-    radial-gradient(circle at 90% 14%, rgba(142, 231, 255, 0.13), transparent 36%),
-    rgba(255, 255, 255, 0.035);
+  background: #1C2323;
 }
 
 .kpi-card.primary {
   background:
-    radial-gradient(circle at 80% 20%, rgba(139, 255, 61, 0.16), transparent 38%),
-    rgba(255, 255, 255, 0.035);
+    radial-gradient(circle at 80% 20%, rgba(138, 211, 42, 0.16), transparent 38%),
+    #1C2323;
 }
 
 .kpi-label {
@@ -409,12 +402,12 @@ a:focus-visible {
   font-variant-numeric: tabular-nums;
   font-weight: 780;
   line-height: 1;
-  text-shadow: 0 0 18px rgba(142, 231, 255, 0.36);
+  text-shadow: 0 0 18px rgba(48, 132, 197, 0.36);
 }
 
 .kpi-card.primary strong {
   color: var(--green);
-  text-shadow: 0 0 18px rgba(139, 255, 61, 0.34);
+  text-shadow: 0 0 18px rgba(138, 211, 42, 0.34);
 }
 
 .delta-pill {
@@ -431,15 +424,15 @@ a:focus-visible {
 }
 
 .delta-pill.up {
-  border: 1px solid rgba(139, 255, 61, 0.32);
+  border: 1px solid rgba(138, 211, 42, 0.32);
   color: var(--green);
-  background: rgba(139, 255, 61, 0.08);
+  background: rgba(138, 211, 42, 0.08);
 }
 
 .delta-pill.down {
-  border: 1px solid rgba(255, 75, 95, 0.32);
+  border: 1px solid rgba(255, 49, 98, 0.32);
   color: var(--danger);
-  background: rgba(255, 75, 95, 0.08);
+  background: rgba(255, 49, 98, 0.08);
 }
 
 .chart-toolbar {
@@ -452,9 +445,7 @@ a:focus-visible {
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   padding: 8px 9px 26px;
-  background:
-    radial-gradient(circle at 70% 22%, rgba(139, 255, 61, 0.11), transparent 30%),
-    rgba(5, 16, 16, 0.36);
+  background: #1C2323;
 }
 
 .chart-card.compact {
@@ -470,7 +461,7 @@ a:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 8px 10px;
-  background: rgba(12, 24, 24, 0.88);
+  background: rgba(28, 35, 35, 0.88);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
 }
 
@@ -543,12 +534,12 @@ a:focus-visible {
 .chart-grid,
 .chart-axis {
   fill: none;
-  stroke: rgba(231, 249, 240, 0.13);
+  stroke: rgba(180, 180, 180, 0.13);
   stroke-width: 1;
 }
 
 .chart-axis {
-  stroke: rgba(231, 249, 240, 0.2);
+  stroke: rgba(180, 180, 180, 0.2);
 }
 
 .chart-fill {
@@ -560,18 +551,18 @@ a:focus-visible {
   stroke: url("#lineGradient");
   stroke-linecap: round;
   stroke-width: 2.8;
-  filter: drop-shadow(0 0 7px rgba(139, 255, 61, 0.62));
+  filter: drop-shadow(0 0 7px rgba(138, 211, 42, 0.62));
 }
 
 .baseline-line {
   fill: none;
-  stroke: rgba(219, 237, 228, 0.34);
+  stroke: rgba(180, 180, 180, 0.34);
   stroke-dasharray: 5 5;
   stroke-width: 1.4;
 }
 
 .chart-point {
-  fill: #071312;
+  fill: #0D1515;
   stroke: var(--green);
   stroke-width: 1.6;
 }
@@ -645,7 +636,7 @@ a:focus-visible {
   min-width: 118px;
   justify-content: center;
   padding: 0 10px;
-  color: rgba(245, 255, 249, 0.86);
+  color: rgba(220, 228, 228, 0.86);
   background: rgba(255, 255, 255, 0.1);
   font-size: 12px;
 }
@@ -676,7 +667,7 @@ a:focus-visible {
   flex-direction: column;
   border-radius: 16px 0 0 16px;
   padding: 28px 16px 0;
-  background: rgba(28, 43, 40, 0.98);
+  background: #1C2323;
   box-shadow: -20px 0 44px rgba(0, 0, 0, 0.38);
   animation: project-tree-in 180ms ease-out;
 }
@@ -718,7 +709,7 @@ a:focus-visible {
   border-radius: 8px;
   padding: 0 8px;
   color: var(--text);
-  background: rgba(139, 255, 61, 0.08);
+  background: rgba(138, 211, 42, 0.08);
   font-size: 12px;
 }
 
@@ -768,7 +759,7 @@ a:focus-visible {
   display: grid;
   grid-template-columns: 22px minmax(0, 1fr);
   gap: 4px;
-  border-bottom: 1px solid rgba(221, 244, 233, 0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding: 10px 0 9px;
 }
 
@@ -808,7 +799,7 @@ a:focus-visible {
 
 .project-tree-list em.formal {
   color: var(--green);
-  background: rgba(139, 255, 61, 0.08);
+  background: rgba(138, 211, 42, 0.08);
 }
 
 .project-tree-list em.informal {
@@ -817,8 +808,8 @@ a:focus-visible {
 }
 
 .project-tree-list em.pending {
-  color: #ffb453;
-  background: rgba(255, 180, 83, 0.08);
+  color: #FFD333;
+  background: rgba(255, 211, 51, 0.08);
 }
 
 .project-tree-list small {
@@ -906,7 +897,7 @@ a:focus-visible {
   gap: 8px;
   border-radius: 8px;
   padding: 0 12px;
-  color: rgba(236, 252, 244, 0.86);
+  color: rgba(220, 228, 228, 0.86);
   background: rgba(255, 255, 255, 0.08);
   font-size: 11px;
 }
@@ -934,6 +925,9 @@ a:focus-visible {
 
 .gauge-card {
   min-width: 0;
+  border-radius: 12px;
+  padding: 8px;
+  background: #1C2323;
 }
 
 .gauge-face {
@@ -948,20 +942,20 @@ a:focus-visible {
   width: 116px;
   height: 116px;
   margin: 0 auto;
-  border: 13px solid rgba(255, 255, 255, 0.12);
+  border: 13px solid #2C3131;
   border-bottom-color: transparent;
-  border-left-color: rgba(255, 255, 255, 0.08);
+  border-left-color: rgba(255, 255, 255, 0.06);
   border-radius: 50%;
 }
 
 .gauge-face.green .gauge-arc {
-  border-top-color: rgba(139, 255, 61, 0.88);
-  border-right-color: rgba(139, 255, 61, 0.6);
+  border-top-color: rgba(138, 211, 42, 0.88);
+  border-right-color: rgba(138, 211, 42, 0.6);
 }
 
 .gauge-face.blue .gauge-arc {
-  border-top-color: rgba(64, 175, 255, 0.9);
-  border-right-color: rgba(64, 175, 255, 0.58);
+  border-top-color: rgba(48, 132, 197, 0.9);
+  border-right-color: rgba(48, 132, 197, 0.58);
 }
 
 .gauge-needle {
@@ -972,7 +966,7 @@ a:focus-visible {
   height: 2px;
   transform-origin: right center;
   border-radius: 2px;
-  background: #f6fff9;
+  background: #DCE4E4;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
 }
 
@@ -1011,7 +1005,7 @@ a:focus-visible {
 }
 
 .dot.blue {
-  background: #40afff;
+  background: #3084C5;
 }
 
 .bar-chart {
@@ -1020,7 +1014,7 @@ a:focus-visible {
   margin-top: 16px;
   border-radius: 12px;
   padding: 0;
-  background: rgba(255, 255, 255, 0.035);
+  background: #1C2323;
 }
 
 .bar-grid-lines {
@@ -1052,11 +1046,11 @@ a:focus-visible {
 .bar-fill {
   width: 22px;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, rgba(139, 255, 61, 0.92), rgba(139, 255, 61, 0.18));
+  background: linear-gradient(180deg, rgba(138, 211, 42, 0.92), rgba(138, 211, 42, 0.18));
 }
 
 .bar-fill.blue {
-  background: linear-gradient(180deg, rgba(64, 175, 255, 0.92), rgba(64, 175, 255, 0.2));
+  background: linear-gradient(180deg, rgba(48, 132, 197, 0.92), rgba(48, 132, 197, 0.2));
 }
 
 .bar-item span {
@@ -1110,7 +1104,7 @@ a:focus-visible {
   margin-top: 12px;
   border-radius: 12px;
   padding: 13px 14px;
-  background: rgba(255, 255, 255, 0.045);
+  background: #1C2323;
 }
 
 .dealer-row {
@@ -1137,7 +1131,7 @@ a:focus-visible {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #348bd1, #35a6e6);
+  background: linear-gradient(90deg, #3084C5, #35a6e6);
 }
 
 .dealer-row:last-child i {
@@ -1193,7 +1187,7 @@ a:focus-visible {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 18px;
-  background: #101a19;
+  background: #1C2323;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
   animation: drawer-in 180ms ease-out;
 }
@@ -1215,7 +1209,7 @@ a:focus-visible {
 .filter-head {
   padding: 0 14px;
   color: #ffffff;
-  background: #101716;
+  background: #1C2323;
   font-size: 14px;
   font-weight: 760;
 }
@@ -1267,7 +1261,7 @@ a:focus-visible {
 
 .filter-actions .confirm {
   color: #ffffff;
-  background: #87dc22;
+  background: #8AD32A;
 }
 
 .report-page,
@@ -1344,7 +1338,7 @@ a:focus-visible {
   min-width: 40px;
   min-height: 38px;
   border-radius: 10px;
-  color: #0b160e;
+  color: #0D1515;
   background: var(--green);
 }
 
@@ -1426,12 +1420,12 @@ a:focus-visible {
 
 .tag.green {
   color: var(--green);
-  background: rgba(139, 255, 61, 0.12);
+  background: rgba(138, 211, 42, 0.12);
 }
 
 .tag.amber {
   color: var(--amber);
-  background: rgba(255, 180, 83, 0.12);
+  background: rgba(255, 211, 51, 0.12);
 }
 
 .report-item-main small {
@@ -1468,7 +1462,7 @@ a:focus-visible {
   min-height: 32px;
   place-items: center;
   border-radius: 50%;
-  color: #071111;
+  color: #0D1515;
   background: var(--green);
 }
 
@@ -1546,7 +1540,7 @@ a:focus-visible {
   height: 24px;
   place-items: center;
   border-radius: 50%;
-  color: #071111;
+  color: #0D1515;
   background: var(--green);
   font-size: 11px;
 }
@@ -1558,7 +1552,7 @@ a:focus-visible {
   margin-top: 30px;
   border-radius: 9px;
   color: #ffffff;
-  background: #87dc22;
+  background: #8AD32A;
   font-weight: 760;
 }
 
@@ -1599,7 +1593,7 @@ a:focus-visible {
 }
 
 .report-submit-bar .submit {
-  background: #87dc22;
+  background: #8AD32A;
 }
 
 .dialog-overlay,
@@ -1627,7 +1621,7 @@ a:focus-visible {
   overflow: auto;
   border-radius: 14px;
   padding: 18px;
-  background: #1e2b29;
+  background: #1C2323;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
 
@@ -1677,8 +1671,8 @@ a:focus-visible {
 }
 
 .day-grid button.selected {
-  color: #071111;
-  background: #87dc22;
+  color: #0D1515;
+  background: #8AD32A;
 }
 
 .dealer-picker,
@@ -1754,7 +1748,7 @@ a:focus-visible {
   min-height: 100%;
   overflow: auto;
   padding: 22px 14px 18px;
-  background: #1f2c2a;
+  background: #1C2323;
 }
 
 .report-filter-drawer h2 {
@@ -1805,7 +1799,7 @@ a:focus-visible {
 }
 
 .switch-row input {
-  accent-color: #87dc22;
+  accent-color: #8AD32A;
 }
 
 .report-actions {
@@ -1880,14 +1874,14 @@ a:focus-visible {
 .ranking-row {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(183, 255, 218, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
     rgba(24, 43, 39, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 -8px 20px rgba(139, 255, 61, 0.035);
+    0 -8px 20px rgba(138, 211, 42, 0.035);
   transition:
     border-color 180ms ease,
     background 180ms ease,
@@ -1918,9 +1912,9 @@ a:focus-visible {
 .ranking-row.expanded {
   z-index: 6;
   margin-bottom: 8px;
-  border-color: rgba(139, 255, 61, 0.28);
+  border-color: rgba(138, 211, 42, 0.28);
   background:
-    linear-gradient(180deg, rgba(139, 255, 61, 0.08), rgba(255, 255, 255, 0.035)),
+    linear-gradient(180deg, rgba(138, 211, 42, 0.08), rgba(255, 255, 255, 0.035)),
     rgba(24, 43, 39, 0.94);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
 }
@@ -1979,13 +1973,13 @@ a:focus-visible {
 }
 
 .project-logo.amber {
-  color: #ffb453;
-  background: rgba(255, 180, 83, 0.1);
+  color: #FFD333;
+  background: rgba(255, 211, 51, 0.1);
 }
 
 .project-logo.green {
   color: var(--green);
-  background: rgba(139, 255, 61, 0.1);
+  background: rgba(138, 211, 42, 0.1);
 }
 
 .ranking-name strong {
@@ -2090,7 +2084,7 @@ a:focus-visible {
   min-width: 16px;
   height: 16px;
   place-items: center;
-  border: 1px solid #040909;
+  border: 1px solid #0D1515;
   border-radius: 999px;
   color: #fff;
   background: var(--danger);
@@ -2191,10 +2185,7 @@ a:focus-visible {
   width: 375px;
   min-height: 812px;
   border: 0;
-  background:
-    radial-gradient(circle at 24% 19%, rgba(58, 145, 74, 0.12), transparent 22%),
-    radial-gradient(circle at 86% 31%, rgba(87, 220, 34, 0.08), transparent 26%),
-    linear-gradient(180deg, #06100f 0%, #071312 52%, #050a09 100%);
+  background: #0D1515;
   box-shadow: 0 28px 80px rgba(7, 12, 16, 0.26);
 }
 
@@ -2262,9 +2253,7 @@ a:focus-visible {
 .report-section-card {
   border-color: var(--border);
   border-radius: 22px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-    var(--surface);
+  background: #151B1B;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.035),
     0 22px 42px rgba(0, 0, 0, 0.3);
@@ -2334,10 +2323,8 @@ a:focus-visible {
 
 .ranking-panel {
   padding: 12px;
-  border-color: rgba(185, 216, 203, 0.26);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.014)),
-    #172521;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #151B1B;
 }
 
 .ranking-list {
@@ -2345,17 +2332,15 @@ a:focus-visible {
 }
 
 .ranking-row {
-  border-color: rgba(185, 216, 203, 0.2);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
-    #1c2d28;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #151B1B;
 }
 
 .ranking-row.expanded {
-  border-color: rgba(135, 220, 34, 0.7);
+  border-color: rgba(138, 211, 42, 0.7);
   background:
-    linear-gradient(180deg, rgba(135, 220, 34, 0.08), rgba(255, 255, 255, 0.015)),
-    #193522;
+    linear-gradient(180deg, rgba(138, 211, 42, 0.08), rgba(255, 255, 255, 0.015)),
+    #151B1B;
 }
 
 .bayer-collapsed-row {
@@ -2369,7 +2354,7 @@ a:focus-visible {
   width: 48px;
   height: 42px;
   border-radius: 10px;
-  background: rgba(139, 255, 61, 0.08);
+  background: rgba(138, 211, 42, 0.08);
   font-size: 17px;
   letter-spacing: -0.5px;
 }
@@ -2412,8 +2397,8 @@ a:focus-visible {
 
 .ranking-expanded-panel .segments button.selected {
   color: #fff;
-  background: rgba(135, 220, 34, 0.12);
-  box-shadow: inset 0 -2px 0 #87dc22;
+  background: rgba(138, 211, 42, 0.12);
+  box-shadow: inset 0 -2px 0 #8AD32A;
 }
 
 .ranking-expanded-panel .section-toolbar div {
@@ -2425,15 +2410,13 @@ a:focus-visible {
 }
 
 .ranking-expanded-panel .kpi-card {
-  background:
-    radial-gradient(circle at 82% 18%, rgba(142, 231, 255, 0.11), transparent 40%),
-    rgba(255, 255, 255, 0.035);
+  background: #1C2323;
 }
 
 .ranking-expanded-panel .kpi-card.primary {
   background:
-    radial-gradient(circle at 78% 20%, rgba(135, 220, 34, 0.17), transparent 40%),
-    rgba(255, 255, 255, 0.035);
+    radial-gradient(circle at 78% 20%, rgba(138, 211, 42, 0.17), transparent 40%),
+    #1C2323;
 }
 
 .ranking-expanded-panel .section-toolbar {
@@ -2442,14 +2425,12 @@ a:focus-visible {
 
 .ranking-expanded-panel .chart-card {
   margin-top: 10px;
-  background:
-    radial-gradient(circle at 76% 24%, rgba(135, 220, 34, 0.08), transparent 33%),
-    rgba(6, 22, 19, 0.58);
+  background: #1C2323;
 }
 
 .bottom-nav {
   height: 64px;
-  background: #141414;
+  background: #171717;
 }
 
 .details-stack {
@@ -2474,11 +2455,97 @@ a:focus-visible {
   max-width: none;
   border-radius: 18px 0 0 18px;
   padding: 38px 20px 0;
-  background: #202b29;
+  background: #1C2323;
 }
 
 .project-tree-panel header {
   min-height: 42px;
+}
+
+.project-switcher-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.project-switcher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 0.15s;
+}
+
+.project-switcher-btn:active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.project-switcher-btn .rotated {
+  transition: transform 0.2s ease;
+  transform: rotate(180deg);
+}
+
+.project-switcher-btn svg:not(.rotated) {
+  transition: transform 0.2s ease;
+}
+
+.project-dropdown-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: transparent;
+}
+
+.project-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 51;
+  min-width: 140px;
+  border-radius: 10px;
+  padding: 4px;
+  background: #1C2323;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  animation: project-dropdown-in 0.15s ease-out;
+}
+
+@keyframes project-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--text-soft);
+  font-size: 13px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.project-dropdown button.selected {
+  color: var(--green);
+  background: rgba(138, 211, 42, 0.1);
+  font-weight: 600;
+}
+
+.project-dropdown button:active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .project-tree-panel h2 {
@@ -2546,7 +2613,7 @@ a:focus-visible {
   width: 100%;
   height: min(510px, calc(100% - 140px));
   border-radius: 22px;
-  background: #111a19;
+  background: #1C2323;
 }
 
 .filter-head {
@@ -2631,12 +2698,10 @@ a:focus-visible {
   gap: 12px;
   min-height: 105px;
   overflow: visible;
-  border-color: rgba(177, 211, 198, 0.18);
+  border-color: rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: 15px 16px;
-  background:
-    radial-gradient(circle at 88% 34%, rgba(135, 220, 34, 0.06), transparent 34%),
-    rgba(24, 35, 33, 0.84);
+  background: #151B1B;
 }
 
 .report-item::before {
@@ -2694,8 +2759,8 @@ a:focus-visible {
 }
 
 .tag.green {
-  border-color: rgba(135, 220, 34, 0.6);
-  background: rgba(135, 220, 34, 0.1);
+  border-color: rgba(138, 211, 42, 0.6);
+  background: rgba(138, 211, 42, 0.1);
 }
 
 .tag.amber {
@@ -2815,7 +2880,7 @@ a:focus-visible {
   max-height: 82%;
   border-radius: 24px;
   padding: 28px 24px;
-  background: #202b29;
+  background: #1C2323;
 }
 
 .dialog-overlay,
@@ -2880,7 +2945,7 @@ a:focus-visible {
 
 .dealer-picker-tabs button.active,
 .info-dialog-tabs button.active {
-  background: #1d2927;
+  background: #1C2323;
 }
 
 .info-dialog {
@@ -2903,7 +2968,7 @@ a:focus-visible {
   min-height: 100%;
   border-radius: 24px 0 0 24px;
   padding: 42px 20px 24px;
-  background: #202b29;
+  background: #1C2323;
 }
 
 .report-filter-drawer h2 {
@@ -2914,7 +2979,7 @@ a:focus-visible {
 .report-filter-drawer section {
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom-color: rgba(177, 211, 198, 0.2);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .report-filter-drawer h3 {
@@ -2941,7 +3006,7 @@ a:focus-visible {
 .bottom-nav {
   height: 64px;
   border-top: 0;
-  background: #151515;
+  background: #171717;
 }
 
 .nav-item {

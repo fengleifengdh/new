@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   ChevronDown,
@@ -54,11 +54,17 @@ export function OverviewView({ data, onOpenDetails }: { data: DashboardData; onO
 export function DetailView({ data, onBack }: { data: DashboardData; onBack: () => void }) {
   const [activePeriod, setActivePeriod] = useState(detailPeriodTabs.find((tab) => tab.label === data.activeTab)?.id || detailPeriodTabs[0].id);
   const [admissionType, setAdmissionType] = useState<'total' | 'formal'>('total');
-  const [projectTreeOpen, setProjectTreeOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState('bayer');
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const [trendExpanded, setTrendExpanded] = useState(false);
   const [trendMode, setTrendMode] = useState<TrendMode>(data.trend.defaultMode);
+  const projects = useMemo(
+    () => [{ id: 'bayer', name: 'Bayer' }, ...data.ranking.map((r) => ({ id: r.id, name: r.name }))],
+    [data.ranking],
+  );
+  const activeProject = projects.find((p) => p.id === selectedProjectId) || projects[0];
   const activeTrend = data.trend.modes.find((mode) => mode.id === trendMode) || data.trend.modes[0];
-  const activePeriodSnapshot = getPeriodSnapshot(activePeriod, data);
+  const activePeriodSnapshot = getProjectSnapshot(selectedProjectId, activePeriod, data);
   const admissionTabs = [
     { id: 'total', label: '总准入' },
     { id: 'formal', label: '正式准入' },
@@ -70,10 +76,6 @@ export function DetailView({ data, onBack }: { data: DashboardData; onBack: () =
         <button className="back-button" onClick={onBack} type="button">
           <ArrowLeft size={15} />
           返回至总览
-        </button>
-        <button className="project-switch" onClick={() => setProjectTreeOpen(true)} type="button">
-          切换项目查看
-          <ChevronDown size={13} />
         </button>
       </section>
 
@@ -98,7 +100,42 @@ export function DetailView({ data, onBack }: { data: DashboardData; onBack: () =
           </div>
 
           <div className="section-toolbar">
-            <span>准入数据</span>
+            <div className="project-switcher-wrap">
+              <button
+                className="project-switcher-btn"
+                onClick={() => setProjectDropdownOpen((open) => !open)}
+                type="button"
+                aria-expanded={projectDropdownOpen}
+              >
+                {activeProject.name}
+                <ChevronDown size={13} className={projectDropdownOpen ? 'rotated' : ''} />
+              </button>
+              {projectDropdownOpen && (
+                <>
+                  <button
+                    className="project-dropdown-scrim"
+                    onClick={() => setProjectDropdownOpen(false)}
+                    type="button"
+                    aria-label="关闭项目选择"
+                  />
+                  <div className="project-dropdown">
+                    {projects.map((p) => (
+                      <button
+                        className={p.id === selectedProjectId ? 'selected' : ''}
+                        key={p.id}
+                        onClick={() => {
+                          setSelectedProjectId(p.id);
+                          setProjectDropdownOpen(false);
+                        }}
+                        type="button"
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
             <div role="tablist" aria-label="准入类型">
               {admissionTabs.map((tab) => (
                 <button
@@ -164,34 +201,30 @@ export function DetailView({ data, onBack }: { data: DashboardData; onBack: () =
         </section>
 
         <DetailMetricsPanel gauges={activePeriodSnapshot.gauges} bars={activePeriodSnapshot.bars} />
-        <DealerRankingPanel dealers={data.details.dealerRanking} />
+        <DealerRankingPanel dealers={activePeriodSnapshot.dealerRanking} />
       </div>
-
-      {projectTreeOpen && <ProjectTreeOverlay onClose={() => setProjectTreeOpen(false)} />}
     </>
   );
 }
 
-const projectTreeItems = Array.from({ length: 32 }, (_, index) => {
-  const status = index < 4 ? 'formal' : index < 8 ? 'informal' : 'pending';
-
-  return {
-    id: index + 1,
-    name: '安徽省第二人民医院',
-    status,
-    date: '2026-06-01',
-  };
-});
-
-function getPeriodSnapshot(periodId: string, data: DashboardData) {
-  const factorByPeriod: Record<string, number> = {
+function getProjectSnapshot(projectId: string, periodId: string, data: DashboardData) {
+  const periodFactors: Record<string, number> = {
     'phase-3': 1,
     'phase-2': 0.94,
     'phase-1': 0.88,
     'overall-1': 0.97,
     'overall-2': 0.92,
   };
-  const factor = factorByPeriod[periodId] || 1;
+  const periodFactor = periodFactors[periodId] || 1;
+
+  const projectFactors: Record<string, number> = {
+    bayer: 1,
+    'v-club': 0.96,
+    ad: 0.91,
+    deer: 0.85,
+  };
+  const projectFactor = projectFactors[projectId] ?? 1;
+  const factor = periodFactor * projectFactor;
 
   return {
     bars: data.details.bars.map((bar) => ({
@@ -202,6 +235,10 @@ function getPeriodSnapshot(periodId: string, data: DashboardData) {
       ...gauge,
       totalRate: clampPercent(gauge.totalRate * factor),
       formalRate: clampPercent(gauge.formalRate * factor),
+    })),
+    dealerRanking: data.details.dealerRanking.map((dealer) => ({
+      ...dealer,
+      value: clampPercent(dealer.value * factor),
     })),
     summary: {
       admissionCount: Math.round(data.summary.admissionCount * factor),
@@ -216,44 +253,64 @@ function clampPercent(value: number) {
   return Number(Math.min(99.9, Math.max(0, value)).toFixed(1));
 }
 
-function ProjectTreeOverlay({ onClose }: { onClose: () => void }) {
+const dealerTreeItems = Array.from({ length: 32 }, (_, index) => {
+  const status = index < 4 ? 'formal' : index < 8 ? 'informal' : 'pending';
+  const day = ((index * 7) % 28) + 1;
+
+  return {
+    id: index + 1,
+    name: '安徽省第二人民医院',
+    status,
+    date: `2026-06-${String(day).padStart(2, '0')}`,
+  };
+});
+
+function DealerTreeOverlay({ onClose }: { onClose: () => void }) {
+  const [area, setArea] = useState('北京市');
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+
   return (
-    <div className="project-tree-overlay" role="dialog" aria-modal="true" aria-label="总条目树">
-      <button className="project-tree-scrim" onClick={onClose} type="button" aria-label="关闭总条目树" />
+    <div className="project-tree-overlay" role="dialog" aria-modal="true" aria-label="大区下钻">
+      <button className="project-tree-scrim" onClick={onClose} type="button" aria-label="关闭大区下钻" />
       <aside className="project-tree-panel">
         <header>
           <h2>
             总条目 <strong>32</strong> 家
           </h2>
-          <button onClick={onClose} type="button" aria-label="关闭总条目树">
+          <button onClick={onClose} type="button" aria-label="关闭大区下钻">
             <X size={19} />
           </button>
         </header>
 
         <div className="project-tree-chip">
-          北京市
-          <X size={12} />
+          {area}
+          <button onClick={() => setArea('')} type="button" aria-label={`移除${area}`}>
+            <X size={12} />
+          </button>
         </div>
 
         <div className="project-tree-filters">
-          <button type="button">
+          <button type="button" onClick={() => { setTypeOpen((o) => !o); setTimeOpen(false); }}>
             准入形式
-            <ChevronDown size={13} />
+            <ChevronDown size={13} className={typeOpen ? 'rotated' : ''} />
           </button>
-          <button type="button">
+          <button type="button" onClick={() => { setTimeOpen((o) => !o); setTypeOpen(false); }}>
             准入时间
-            <ChevronDown size={13} />
+            <ChevronDown size={13} className={timeOpen ? 'rotated' : ''} />
           </button>
         </div>
 
         <ol className="project-tree-list">
-          {projectTreeItems.map((item) => (
+          {dealerTreeItems.slice(0, 11).map((item) => (
             <li key={item.id}>
               <span>{item.id}</span>
               <div>
                 <strong>{item.name}</strong>
                 <p>
-                  <em className={item.status}>{item.status === 'formal' ? '正式准入' : item.status === 'informal' ? '非正式准入' : '未准入'}</em>
+                  <em className={item.status}>
+                    {item.status === 'formal' ? '正式准入' : item.status === 'informal' ? '非正式准入' : '未准入'}
+                  </em>
                   <small>准入时间： {item.date}</small>
                 </p>
               </div>
@@ -633,6 +690,7 @@ function GaugeCard({ gauge }: { gauge: DetailGauge }) {
 
 function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
   const [filterOpen, setFilterOpen] = useState(false);
+  const [treeOpen, setTreeOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState({
     area: '华北区',
     province: '河北省',
@@ -666,7 +724,7 @@ function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
           筛选
           <Filter size={13} />
         </button>
-        <button type="button">
+        <button type="button" onClick={() => setTreeOpen(true)}>
           按经销商排名
           <ChevronDown size={13} />
         </button>
@@ -695,6 +753,7 @@ function DealerRankingPanel({ dealers }: { dealers: DealerRank[] }) {
           onSelect={setActiveFilter}
         />
       )}
+      {treeOpen && <DealerTreeOverlay onClose={() => setTreeOpen(false)} />}
     </section>
   );
 }

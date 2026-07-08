@@ -57,15 +57,15 @@ export function TrendEChart({
           type: 'category',
           boundaryGap: false,
           data: data.months,
-          axisLine: { lineStyle: { color: 'rgba(231,249,240,0.2)' } },
+          axisLine: { lineStyle: { color: 'rgba(180,180,180,0.2)' } },
           axisTick: { show: false },
-          axisLabel: { color: 'rgba(231,249,240,0.48)', fontSize: 9 },
+          axisLabel: { color: '#979797', fontSize: 9 },
         },
         yAxis: {
           type: 'value',
           min: 0,
           max: 100,
-          splitLine: { lineStyle: { color: 'rgba(231,249,240,0.12)' } },
+          splitLine: { lineStyle: { color: 'rgba(180,180,180,0.12)' } },
           axisLabel: { show: false },
         },
         series: [
@@ -77,9 +77,9 @@ export function TrendEChart({
             symbolSize: 6,
             data: rateData,
             animationDelayUpdate: (index: number) => index * 42,
-            lineStyle: { width: 3, color: '#8bff3d' },
-            itemStyle: { color: '#8bff3d', borderColor: '#071312', borderWidth: 2 },
-            areaStyle: { color: 'rgba(139,255,61,0.16)' },
+            lineStyle: { width: 3, color: '#8AD32A' },
+            itemStyle: { color: '#8AD32A', borderColor: '#0D1515', borderWidth: 2 },
+            areaStyle: { color: 'rgba(138,211,42,0.16)' },
           },
           {
             name: '基线',
@@ -88,7 +88,7 @@ export function TrendEChart({
             symbol: 'none',
             data: baselineData,
             animationDelayUpdate: (index: number) => index * 42,
-            lineStyle: { width: 1.4, color: 'rgba(219,237,228,0.34)', type: 'dashed' },
+            lineStyle: { width: 1.4, color: 'rgba(180,180,180,0.34)', type: 'dashed' },
           },
         ],
       }}
@@ -107,7 +107,7 @@ function isSeriesPointClick(value: unknown): value is { componentType: string; d
 }
 
 export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
-  const color = gauge.tone === 'blue' ? '#40afff' : '#8bff3d';
+  const color = gauge.tone === 'blue' ? '#3084C5' : '#8AD32A';
   const animated = useEntranceAnimation(`${gauge.title}-${gauge.totalRate}`);
 
   return (
@@ -129,12 +129,12 @@ export function GaugeEChart({ gauge }: { gauge: DetailGauge }) {
             center: ['50%', '78%'],
             splitNumber: 5,
             progress: { show: true, width: 10, itemStyle: { color } },
-            axisLine: { lineStyle: { width: 10, color: [[1, 'rgba(255,255,255,0.12)']] } },
-            axisTick: { distance: -15, length: 4, lineStyle: { color: 'rgba(231,249,240,0.4)', width: 1 } },
-            splitLine: { distance: -18, length: 8, lineStyle: { color: 'rgba(231,249,240,0.45)', width: 1 } },
-            axisLabel: { distance: -10, color: 'rgba(231,249,240,0.48)', fontSize: 7 },
-            pointer: { length: '58%', width: 3, itemStyle: { color: '#f6fff9' } },
-            anchor: { show: true, size: 6, itemStyle: { color: '#f6fff9' } },
+            axisLine: { lineStyle: { width: 10, color: [[1, '#2C3131']] } },
+            axisTick: { distance: -15, length: 4, lineStyle: { color: 'rgba(180,180,180,0.4)', width: 1 } },
+            splitLine: { distance: -18, length: 8, lineStyle: { color: 'rgba(180,180,180,0.45)', width: 1 } },
+            axisLabel: { distance: -10, color: '#979797', fontSize: 7 },
+            pointer: { length: '58%', width: 3, itemStyle: { color: '#DCE4E4' } },
+            anchor: { show: true, size: 6, itemStyle: { color: '#DCE4E4' } },
             detail: { show: false },
             data: [{ value: animated ? gauge.totalRate : 0 }],
           },
@@ -157,18 +157,18 @@ export function DetailBarsEChart({ bars }: { bars: DetailBar[] }) {
         animationEasing: 'cubicOut',
         animationEasingUpdate: 'cubicOut',
         grid: { left: 20, right: 12, top: 18, bottom: 30 },
-        tooltip: { trigger: 'axis', backgroundColor: 'rgba(12,24,24,0.92)', textStyle: { color: '#f3fff8', fontSize: 10 } },
+        tooltip: { trigger: 'axis', backgroundColor: 'rgba(28,35,35,0.92)', textStyle: { color: '#DCE4E4', fontSize: 10 } },
         xAxis: {
           type: 'category',
           data: bars.map((bar) => bar.label),
           axisTick: { show: false },
           axisLine: { show: false },
-          axisLabel: { color: 'rgba(231,249,240,0.48)', fontSize: 8, interval: 0 },
+          axisLabel: { color: '#979797', fontSize: 8, interval: 0 },
         },
         yAxis: {
           type: 'value',
           splitLine: { lineStyle: { color: 'rgba(255,255,255,0.07)' } },
-          axisLabel: { color: 'rgba(231,249,240,0.35)', fontSize: 8 },
+          axisLabel: { color: '#979797', fontSize: 8 },
         },
         series: [
           {
@@ -178,11 +178,11 @@ export function DetailBarsEChart({ bars }: { bars: DetailBar[] }) {
               value: animated ? bar.value : 0,
               itemStyle: {
                 borderRadius: [6, 6, 0, 0],
-                color: bar.tone === 'blue' ? '#35a6e6' : '#8bff3d',
+                color: bar.tone === 'blue' ? '#3084C5' : '#8AD32A',
               },
             })),
             animationDelayUpdate: (index: number) => index * 55,
-            label: { show: true, position: 'top', color: '#f3fff8', fontSize: 9 },
+            label: { show: true, position: 'top', color: '#DCE4E4', fontSize: 9 },
           },
         ],
       }}
@@ -210,7 +210,7 @@ export function DealerRankingEChart({ dealers }: { dealers: DealerRank[] }) {
           data: dealers.map((dealer, index) => `#${index + 1} ${dealer.name}`),
           axisLine: { show: false },
           axisTick: { show: false },
-          axisLabel: { color: 'rgba(231,249,240,0.48)', fontSize: 10 },
+          axisLabel: { color: '#979797', fontSize: 10 },
         },
         series: [
           {
@@ -218,12 +218,12 @@ export function DealerRankingEChart({ dealers }: { dealers: DealerRank[] }) {
             barWidth: 12,
             data: dealers.map((dealer, index) => ({
               value: animated ? dealer.value : 0,
-              itemStyle: { borderRadius: 99, color: index === dealers.length - 1 ? '#8bff3d' : '#35a6e6' },
+              itemStyle: { borderRadius: 99, color: index === dealers.length - 1 ? '#8AD32A' : '#3084C5' },
             })),
             animationDelayUpdate: (index: number) => index * 55,
             showBackground: true,
             backgroundStyle: { color: 'rgba(255,255,255,0.08)', borderRadius: 99 },
-            label: { show: true, position: 'right', formatter: '{c}%', color: '#f3fff8', fontSize: 9 },
+            label: { show: true, position: 'right', formatter: '{c}%', color: '#DCE4E4', fontSize: 9 },
           },
         ],
       }}

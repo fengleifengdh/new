@@ -1,99 +1,48 @@
 # Docker 部署说明
 
-## 本地构建镜像
+本项目通过路径代理 (`/bayer-mobile/`) 挂接到已有 Nginx 反代下，与 `cn-ph-bidding-process` 等其他前端项目共用一个入口。
+
+## 架构概览
+
+```
+用户请求 → 服务器 Nginx (80)
+              ├─ /bayer/         → bidding-frontend-dev
+              ├─ /bidding/       → bidding-backend-dev
+              └─ /bayer-mobile/  → bayer-wecom-mobile  (本项目)
+```
+
+## 前置条件
+
+服务器上已有共享 Docker 网络。如果还没有：
 
 ```bash
-docker build -t bayer-wecom-mobile:latest .
+docker network create shared-proxy
 ```
 
-## 本地运行容器
+## 部署步骤
+
+### 方案 A: 上传源码到服务器构建（推荐）
 
 ```bash
-docker run -d --name bayer-wecom-mobile --restart unless-stopped -p 8080:80 bayer-wecom-mobile:latest
-```
-
-访问：
-
-```text
-http://服务器IP:8080
-```
-
-## 使用 docker compose
-
-```bash
-docker compose up -d --build
-```
-
-默认端口映射是：
-
-```text
-服务器 8080 -> 容器 80
-```
-
-如果服务器已有 8080 端口占用，修改 `docker-compose.yml`：
-
-```yaml
-ports:
-  - "你的端口:80"
-```
-
-## 从 GitHub 拉取部署
-
-```bash
-git clone git@github.com:fengleifengdh/new.git
+# 在服务器上
+git clone https://github.com/fengleifengdh/new.git
 cd new
 docker compose up -d --build
 ```
 
-如果服务器没有配置 GitHub SSH key，可以用 HTTPS：
+### 方案 B: 本地打包上传
 
-```bash
-git clone https://github.com/fengleifengdh/new.git
-```
-
-## 本地静态镜像验证
-
-如果 Docker 无法拉取 `node` 或 `nginx` 基础镜像，可以先用本地静态验证版。
-
-先构建前端产物：
-
-```bash
-npm install
-npm run build
-```
-
-再启动静态容器：
-
-```bash
-docker compose -f docker-compose.static.yml up -d --build
-```
-
-访问：
-
-```text
-http://localhost:8080
-```
-
-注意：`Dockerfile.static` 依赖本地已经生成的 `dist` 目录，适合本地验证；服务器正式部署优先使用默认的 `Dockerfile` 和 `docker-compose.yml`。
-
-## 打包成文件后上传服务器
-
-如果你不想在服务器上拉 GitHub 或重新构建镜像，可以在本地打包：
+在本地（Windows PowerShell）：
 
 ```powershell
+# 先构建
+npm run build
+
+# 打包源码 + dist
 powershell -ExecutionPolicy Bypass -File scripts/package-docker.ps1
 ```
 
-打包完成后会生成：
-
-```text
-release/
-  bayer-wecom-mobile-docker.tar
-  deploy-docker.sh
-  README.md
-```
-
-把整个 `release` 文件夹上传到服务器，然后在服务器执行：
+然后把 `release/` 文件夹上传到服务器，执行：
 
 ```bash
 cd release
@@ -101,50 +50,88 @@ chmod +x deploy-docker.sh
 ./deploy-docker.sh
 ```
 
-默认访问端口是 `8080`。如果要改端口：
+## 配置 Nginx 反向代理
+
+容器启动后，在服务器已有 Nginx 中加入以下 location 块。
+
+已有 Nginx 配置通常在 `/etc/nginx/nginx.conf` 或 `cn-ph-bidding-process` 项目的 `.deploy/cn-ph-bidding-process/deploy/nginx/default.conf` 中。
+
+```nginx
+location /bayer-mobile/ {
+    proxy_pass http://bayer-wecom-mobile/bayer-mobile/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+添加后重载 Nginx：
 
 ```bash
-APP_PORT=8090 ./deploy-docker.sh
+docker exec bidding-nginx-dev nginx -s reload
+# 或者如果 Nginx 是宿主机直接安装的:
+# nginx -s reload
 ```
+
+## 访问
+
+```text
+http://服务器IP/bayer-mobile/
+```
+
+## 路径说明
+
+| 配置项 | 值 | 说明 |
+|--------|-----|------|
+| Vite `base` | `/bayer-mobile/` | 前端构建时注入，所有资源引用带此前缀 |
+| 容器内 Nginx | `/bayer-mobile/` SPA 路由 | 处理路径前缀，转发到 index.html |
+| 容器内路径 | `/usr/share/nginx/html/bayer-mobile/` | dist 文件实际位置 |
+| 外部 Nginx | `proxy_pass` 到容器名 | 依赖共享 Docker 网络 |
+
+## 修改访问路径
+
+如果要换一个路径前缀（比如 `/app/`），需要改三个地方：
+
+1. `.env` 和 `.env.production`: `VITE_APP_BASE=/app/`
+2. `Dockerfile`: `COPY --from=build /app/dist /usr/share/nginx/html/app`
+3. `nginx.conf`: 把 `/bayer-mobile/` 换成 `/app/`
+4. 服务器 Nginx location: 同样换前缀
 
 ## 常用命令
 
-查看容器：
-
 ```bash
-docker ps
-```
+# 查看容器
+docker ps | grep bayer
 
-查看日志：
-
-```bash
+# 查看日志
 docker logs -f bayer-wecom-mobile
-```
 
-重启：
+# 重启
+docker compose restart
 
-```bash
-docker restart bayer-wecom-mobile
-```
+# 重新构建并启动
+docker compose up -d --build
 
-停止并删除：
-
-```bash
+# 停止并删除
 docker compose down
 ```
 
-## 后端接口说明
+## 本地独立验证（不走 Nginx）
 
-当前项目的 mock 数据在：
+如果只想本地验证不接 Nginx，改 `docker-compose.yml`：
 
-```text
-public/api/dashboard.json
+```yaml
+# 注释掉 expose 和 networks
+# 取消注释 ports
+ports:
+  - "8080:80"
+networks: []  # 独立运行
 ```
 
-构建后会变成容器里的：
+然后：
 
-```text
-/usr/share/nginx/html/api/dashboard.json
+```bash
+docker compose up -d --build
+# 访问 http://localhost:8080/bayer-mobile/
 ```
-
-后续如果要接真实后端，建议在后端或网关提供正式接口，然后修改前端的接口地址配置。

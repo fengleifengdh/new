@@ -2,13 +2,13 @@ FROM alpine:3.20
 
 WORKDIR /www
 
-COPY dist ./
+COPY dist ./bayer-mobile/
 COPY docker-static-server.sh /server.sh
 RUN chmod +x /server.sh
 
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+  CMD wget -qO- http://127.0.0.1/bayer-mobile/ 2>/dev/null | grep -q '<!doctype' || exit 1
 
 CMD ["nc", "-lk", "-p", "80", "-e", "/server.sh"]
